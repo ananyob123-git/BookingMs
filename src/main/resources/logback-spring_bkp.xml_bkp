@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Define log levels for various packages -->
+    <logger name="com.assignment.project.BookingMs.*" level="INFO"/>
+    <logger name="com.assignment.project.BookingMs.Controller" level="DEBUG"/>
+    <logger name="com.assignment.project.BookingMs.Controller" level="ERROR"/>
+
+    <!-- Console appender for local development -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logstash appender to send logs to Logstash over TCP -->
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>logstash-host:5044</destination> <!-- Logstash hostname and port -->
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+
+        <!-- Optional: Retry policy in case Logstash is down -->
+        <reconnectionDelay>10000</reconnectionDelay> <!-- 10 seconds -->
+
+        <!-- Optional: Send logs asynchronously to avoid blocking the application -->
+        <includeCallerData>true</includeCallerData>
+        <keepAliveDuration>30 minutes</keepAliveDuration>
+    </appender>
+
+    <!-- Root logger, sending logs to both console and Logstash -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="LOGSTASH"/>
+    </root>
+</configuration>
